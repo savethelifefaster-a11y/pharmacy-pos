@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>PharmaPOS Final</title>
+    <title>PharmaPOS Enterprise</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
     
     <style>
-        body { background-color: #f3f4f6; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #f0f2f5; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         .app-container { min-height: 100vh; display: flex; flex-direction: column; }
-        .main-content { flex: 1; padding-bottom: 80px; overflow-y: auto; }
+        .main-content { flex: 1; padding-bottom: 90px; overflow-y: auto; }
         .hidden-section { display: none !important; }
-        
-        /* MAGIC PRINT CSS: Hides everything except the invoice when saving as PDF */
+        .form-section { background: white; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 12px; }
+        .form-section-title { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        input, select { background: #f9fafb; border: 1px solid #d1d5db !important; }
+        input:focus, select:focus { border-color: #2563eb !important; outline: none; box-shadow: 0 0 0 2px rgba(37,99,235,0.2); }
         @media print {
             body * { visibility: hidden; }
             #invoice-print-area, #invoice-print-area * { visibility: visible; }
@@ -26,145 +28,192 @@
 </head>
 <body>
     <div class="app-container" id="main-app-ui">
-        <header class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide">PharmaPOS</h1>
-            <span class="text-xs bg-green-800 px-2 py-1 rounded">Offline Ready</span>
+        <header class="bg-blue-700 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wide">PharmaPOS <span class="text-xs font-normal opacity-80">PRO</span></h1>
+            <span class="text-xs bg-blue-900 px-2 py-1 rounded shadow-inner">Offline</span>
         </header>
 
         <main class="main-content p-4" id="main-container">
             
             <section id="module-dashboard" class="module-section block">
-                <h2 class="text-lg font-bold text-gray-700 mb-4">Today's Overview</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Today's Business</h2>
                 <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-white p-4 rounded-xl shadow border-l-4 border-green-500">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Sales</p>
-                        <p class="text-xl font-bold text-gray-800" id="dash-sales">₹0.00</p>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-500 relative overflow-hidden">
+                        <i data-feather="trending-up" class="absolute -right-2 -bottom-2 w-12 h-12 text-green-50 opacity-50"></i>
+                        <p class="text-xs text-gray-500 font-bold uppercase">Total Sales</p>
+                        <p class="text-2xl font-bold text-gray-800 mt-1" id="dash-sales">₹0.00</p>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow border-l-4 border-blue-500">
-                        <p class="text-xs text-gray-500 font-semibold uppercase">Profit</p>
-                        <p class="text-xl font-bold text-gray-800" id="dash-profit">₹0.00</p>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500 relative overflow-hidden">
+                        <i data-feather="pie-chart" class="absolute -right-2 -bottom-2 w-12 h-12 text-blue-50 opacity-50"></i>
+                        <p class="text-xs text-gray-500 font-bold uppercase">Net Profit</p>
+                        <p class="text-2xl font-bold text-blue-700 mt-1" id="dash-profit">₹0.00</p>
                     </div>
                 </div>
             </section>
 
             <section id="module-pos" class="module-section hidden-section">
-                <h2 class="text-lg font-bold text-gray-700 mb-4">New Invoice</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-3">Billing Counter</h2>
                 
-                <div class="bg-white p-4 rounded-xl shadow mb-4">
-                    <div class="relative mb-2">
-                        <input type="text" id="pos-search" placeholder="Search medicine to bill..." class="w-full p-2 pl-8 border rounded bg-gray-50 focus:outline-none focus:border-blue-500">
-                        <i data-feather="search" class="w-4 h-4 absolute left-2 top-3 text-gray-400"></i>
+                <div class="bg-white p-3 rounded-xl shadow-sm border mb-4">
+                    <div class="relative">
+                        <input type="text" id="pos-search" placeholder="Search item to bill..." class="w-full p-3 pl-10 border rounded-lg text-sm font-semibold">
+                        <i data-feather="search" class="w-5 h-5 absolute left-3 top-3 text-gray-400"></i>
                     </div>
-                    <div id="pos-search-results" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                    <div id="pos-search-results" class="space-y-1 max-h-40 overflow-y-auto mt-2"></div>
                 </div>
 
-                <div class="bg-white p-4 rounded-xl shadow mb-4 min-h-[150px]">
-                    <h3 class="font-bold text-gray-800 mb-2 border-b pb-1">Current Cart</h3>
-                    <div id="pos-cart-list" class="space-y-3 mb-4">
-                        <p class="text-xs text-gray-400 text-center py-4">Cart is empty</p>
+                <div class="bg-white p-4 rounded-xl shadow-sm border mb-4 min-h-[200px] flex flex-col">
+                    <h3 class="font-bold text-gray-800 text-sm mb-3 border-b pb-2 flex justify-between">
+                        <span>Shopping Cart</span>
+                        <span id="cart-item-count" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">0 Items</span>
+                    </h3>
+                    <div id="pos-cart-list" class="space-y-3 flex-1 overflow-y-auto">
+                        <p class="text-sm text-gray-400 text-center py-6">Cart is empty</p>
                     </div>
                     
-                    <div class="border-t pt-3 flex justify-between font-bold text-xl text-gray-800">
-                        <span>Total:</span>
-                        <span id="pos-total">₹0.00</span>
+                    <div class="border-t pt-3 mt-3">
+                        <div class="flex justify-between font-bold text-2xl text-gray-800">
+                            <span>Total:</span>
+                            <span id="pos-total">₹0.00</span>
+                        </div>
                     </div>
                 </div>
 
-                <button id="btn-checkout" disabled class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow hover:bg-blue-700 disabled:opacity-50 mb-4">
+                <button id="btn-checkout" disabled class="w-full bg-blue-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none transition-all mb-4">
                     Complete Checkout
                 </button>
             </section>
 
             <section id="module-inventory" class="module-section hidden-section">
-                <h2 class="text-lg font-bold text-gray-700 mb-4">Inventory Management</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-3">Add New Item</h2>
                 
-                <div class="bg-white p-4 rounded-xl shadow mb-4">
-                    <h3 class="font-bold text-gray-800 mb-3 flex items-center"><i data-feather="plus-circle" class="w-4 h-4 mr-1 text-green-600"></i> Add New Medicine</h3>
-                    <form id="form-add-medicine" class="space-y-3">
-                        <div>
-                            <label class="text-xs text-gray-500 font-semibold">Medicine Name</label>
-                            <input type="text" id="inv-name" required class="w-full p-2 border rounded bg-gray-50">
+                <form id="form-add-medicine" class="space-y-0">
+                    <div class="form-section shadow-sm">
+                        <div class="form-section-title">Item Details</div>
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-gray-600">Item Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="inv-name" required class="w-full p-2.5 rounded-lg mt-1 text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="text-xs text-gray-500 font-semibold">Batch No</label>
-                                <input type="text" id="inv-batch" required class="w-full p-2 border rounded bg-gray-50">
+                                <label class="text-xs font-semibold text-gray-600">Batch No</label>
+                                <input type="text" id="inv-batch" class="w-full p-2.5 rounded-lg mt-1 text-sm">
                             </div>
                             <div>
-                                <label class="text-xs text-gray-500 font-semibold">Expiry Date</label>
-                                <input type="month" id="inv-expiry" required class="w-full p-2 border rounded bg-gray-50">
+                                <label class="text-xs font-semibold text-gray-600">Expiry</label>
+                                <input type="month" id="inv-expiry" class="w-full p-2.5 rounded-lg mt-1 text-sm">
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs text-gray-500 font-semibold">MRP (₹)</label>
-                                <input type="number" step="0.01" id="inv-mrp" required class="w-full p-2 border rounded bg-gray-50">
-                            </div>
-                            <div>
-                                <label class="text-xs text-gray-500 font-semibold">Stock Qty</label>
-                                <input type="number" id="inv-qty" required class="w-full p-2 border rounded bg-gray-50">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 font-semibold">Unit Type</label>
-                            <select id="inv-unit" class="w-full p-2 border rounded bg-gray-50 text-gray-700">
-                                <option value="Strips">Strips</option>
-                                <option value="Pieces">Pieces (Pcs)</option>
-                                <option value="Bottles">Bottles</option>
-                                <option value="Tubes">Tubes</option>
-                                <option value="Boxes">Boxes</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded shadow hover:bg-green-700 mt-2">
-                            Save Medicine
-                        </button>
-                    </form>
-                </div>
+                    </div>
 
-                <div class="bg-white p-4 rounded-xl shadow">
-                    <h3 class="font-bold text-gray-800 mb-3">Current Stock</h3>
+                    <div class="form-section shadow-sm bg-blue-50 border-blue-100">
+                        <div class="form-section-title text-blue-700">Unit & Conversion</div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="text-xs font-semibold text-blue-800">Primary Unit</label>
+                                <select id="inv-unit-pri" class="w-full p-2.5 rounded-lg mt-1 text-sm font-semibold">
+                                    <option value="STRIPS">STRIPS</option>
+                                    <option value="BOTTLES">BOTTLES</option>
+                                    <option value="BOXES">BOXES</option>
+                                    <option value="PIECES">PIECES</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-blue-800">Secondary Unit</label>
+                                <select id="inv-unit-sec" class="w-full p-2.5 rounded-lg mt-1 text-sm font-semibold">
+                                    <option value="TABLETS">TABLETS</option>
+                                    <option value="ML">ML</option>
+                                    <option value="PIECES">PIECES</option>
+                                    <option value="NONE">NONE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="bg-white p-2 rounded border border-blue-200 flex items-center justify-between text-sm">
+                            <span class="font-bold text-gray-700">1 <span id="lbl-pri">STRIP</span> =</span>
+                            <input type="number" id="inv-conv" value="10" min="1" class="w-16 p-1 text-center border rounded font-bold text-blue-600">
+                            <span class="font-bold text-gray-700" id="lbl-sec">TABLETS</span>
+                        </div>
+                    </div>
+
+                    <div class="form-section shadow-sm bg-green-50 border-green-100">
+                        <div class="form-section-title text-green-700">Pricing (Per Primary Unit)</div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-600 uppercase">Purchase Price</label>
+                                <input type="number" step="0.01" id="inv-pp" required class="w-full p-2 rounded-lg mt-1 text-sm font-bold text-gray-800" placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-600 uppercase">MRP</label>
+                                <input type="number" step="0.01" id="inv-mrp" required class="w-full p-2 rounded-lg mt-1 text-sm" placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-green-700 uppercase">Sale Price</label>
+                                <input type="number" step="0.01" id="inv-sp" required class="w-full p-2 rounded-lg mt-1 text-sm font-bold text-green-700 border-green-300" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section shadow-sm">
+                        <div class="form-section-title">Opening Stock</div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Stock Quantity (In Primary Unit)</label>
+                            <input type="number" id="inv-qty" required class="w-full p-3 rounded-lg mt-1 text-lg font-bold" placeholder="E.g., 10">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-gray-900 active:scale-95 transition-all mt-2 mb-8">
+                        Save Item
+                    </button>
+                </form>
+
+                <h2 class="text-lg font-bold text-gray-800 mb-3 border-t pt-6">Inventory List</h2>
+                <div class="bg-white p-3 rounded-xl shadow-sm border">
                     <div class="relative mb-3">
-                        <input type="text" id="inv-search" placeholder="Search medicine..." class="w-full p-2 pl-8 border rounded bg-gray-50">
-                        <i data-feather="search" class="w-4 h-4 absolute left-2 top-3 text-gray-400"></i>
+                        <input type="text" id="inv-search" placeholder="Search inventory..." class="w-full p-2 pl-8 border rounded-lg text-sm">
+                        <i data-feather="search" class="w-4 h-4 absolute left-2.5 top-3 text-gray-400"></i>
                     </div>
                     <div id="inv-list" class="space-y-2"></div>
                 </div>
             </section>
 
             <section id="module-settings" class="module-section hidden-section">
-                <h2 class="text-lg font-bold text-gray-700 mb-4">System Settings & Backup</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Settings & Data</h2>
                 
-                <div class="bg-white p-4 rounded-xl shadow mb-4">
-                    <h3 class="font-bold text-gray-800 mb-2 border-b pb-2">Data Protection</h3>
-                    <p class="text-xs text-gray-500 mb-4">Export your data weekly to prevent loss if your phone breaks or cache is cleared.</p>
+                <div class="bg-white p-4 rounded-xl shadow-sm border mb-4">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center"><i data-feather="database" class="w-5 h-5 mr-2 text-blue-600"></i> Data Management</h3>
                     
-                    <button onclick="exportBackup()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow mb-3 flex items-center justify-center">
-                        <i data-feather="download" class="w-4 h-4 mr-2"></i> Download Backup (JSON)
+                    <button onclick="exportBackup()" class="w-full bg-blue-50 text-blue-700 font-bold py-3 rounded-lg border border-blue-200 mb-3 flex items-center justify-center">
+                        <i data-feather="download" class="w-4 h-4 mr-2"></i> Download Backup
                     </button>
 
-                    <div class="relative border-t pt-4">
-                        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importBackup(event)">
-                        <button onclick="document.getElementById('import-file').click()" class="w-full bg-gray-800 text-white font-bold py-3 rounded-lg shadow flex items-center justify-center">
-                            <i data-feather="upload" class="w-4 h-4 mr-2"></i> Restore from Backup
+                    <input type="file" id="import-file" class="hidden" accept=".json" onchange="importBackup(event)">
+                    <button onclick="document.getElementById('import-file').click()" class="w-full bg-gray-50 text-gray-700 font-bold py-3 rounded-lg border border-gray-200 mb-6 flex items-center justify-center">
+                        <i data-feather="upload" class="w-4 h-4 mr-2"></i> Restore Backup
+                    </button>
+                    
+                    <div class="border-t border-red-100 pt-4">
+                        <h4 class="text-xs font-bold text-red-600 uppercase mb-2">Danger Zone</h4>
+                        <button onclick="factoryReset()" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg shadow flex items-center justify-center">
+                            <i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Factory Reset Database
                         </button>
+                        <p class="text-[10px] text-gray-400 text-center mt-2">Deletes all items and sales. Required for Phase 5 upgrade.</p>
                     </div>
                 </div>
             </section>
-
         </main>
 
-        <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-lg no-print">
-            <button class="nav-btn flex flex-col items-center p-3 text-green-600 w-1/4" data-target="dashboard">
-                <i data-feather="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Home</span>
+        <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.03)] no-print">
+            <button class="nav-btn flex flex-col items-center p-3 text-blue-600 w-1/4" data-target="dashboard">
+                <i data-feather="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Home</span>
             </button>
             <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="pos">
-                <i data-feather="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Billing</span>
+                <i data-feather="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Billing</span>
             </button>
             <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="inventory">
-                <i data-feather="package" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Stock</span>
+                <i data-feather="package" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Items</span>
             </button>
             <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="settings">
-                <i data-feather="settings" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">More</span>
+                <i data-feather="settings" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">More</span>
             </button>
         </nav>
     </div>
@@ -172,45 +221,34 @@
     <div id="invoice-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col">
         <div id="invoice-print-area" class="flex-1 p-6 overflow-y-auto">
             <div class="text-center mb-6 border-b pb-4">
-                <h1 class="text-2xl font-bold text-gray-800">PHARMAPOS</h1>
-                <p class="text-sm text-gray-500">Retail Medical Store</p>
+                <h1 class="text-2xl font-bold text-gray-800">PHARMAPOS PRO</h1>
+                <p class="text-sm text-gray-500">Retail Invoice</p>
                 <p class="text-xs text-gray-400 mt-1" id="invoice-date"></p>
             </div>
-            
-            <div class="mb-4">
-                <table class="w-full text-sm text-left">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="pb-2">Item</th>
-                            <th class="pb-2 text-center">Qty</th>
-                            <th class="pb-2 text-right">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invoice-items" class="text-gray-700">
-                        </tbody>
-                </table>
-            </div>
-            
+            <table class="w-full text-sm text-left mb-4">
+                <thead>
+                    <tr class="border-b"><th class="pb-2">Item</th><th class="pb-2 text-center">Qty</th><th class="pb-2 text-right">Price</th></tr>
+                </thead>
+                <tbody id="invoice-items" class="text-gray-700"></tbody>
+            </table>
             <div class="border-t pt-4 text-right">
-                <p class="text-lg font-bold text-gray-800">Total: <span id="invoice-final-total">₹0.00</span></p>
-                <p class="text-xs text-gray-500 mt-4 text-center">Thank you for your visit!</p>
+                <p class="text-xl font-bold text-gray-800">Total: <span id="invoice-final-total">₹0.00</span></p>
+                <p class="text-[10px] text-gray-400 mt-6 text-center">Software by Ultimate AI Builder Team</p>
             </div>
         </div>
-
         <div class="p-4 bg-gray-100 flex space-x-3 no-print">
             <button onclick="closeInvoice()" class="flex-1 bg-gray-400 text-white font-bold py-3 rounded-lg">New Bill</button>
-            <button onclick="window.print()" class="flex-1 bg-green-600 text-white font-bold py-3 rounded-lg">Save PDF</button>
+            <button onclick="window.print()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg">Print / Save PDF</button>
         </div>
     </div>
 
     <script>
-        localforage.config({ name: 'PharmaPOS_DB', storeName: 'pharmacy_data' });
+        // --- 1. INITIALIZATION ---
+        localforage.config({ name: 'PharmaPOS_PRO', storeName: 'pharmacy_data' });
         const DB = {
             init: async () => {
-                const inv = await localforage.getItem('inventory');
-                if (!inv) await localforage.setItem('inventory', []);
-                const sales = await localforage.getItem('sales');
-                if (!sales) await localforage.setItem('sales', []);
+                if (!(await localforage.getItem('inventory'))) await localforage.setItem('inventory', []);
+                if (!(await localforage.getItem('sales'))) await localforage.setItem('sales', []);
             },
             getTable: async (t) => (await localforage.getItem(t)) || [],
             saveTable: async (t, d) => await localforage.setItem(t, d)
@@ -218,21 +256,26 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             await DB.init(); setupNavigation(); refreshDashboard(); loadInventory(); feather.replace();
+            
+            // UI Dynamic Listeners for Add Item Form
+            document.getElementById('inv-unit-pri').addEventListener('change', (e) => { document.getElementById('lbl-pri').innerText = e.target.value; });
+            document.getElementById('inv-unit-sec').addEventListener('change', (e) => { document.getElementById('lbl-sec').innerText = e.target.value; });
         });
 
+        // --- 2. NAVIGATION ---
         function setupNavigation() {
             const btns = document.querySelectorAll('.nav-btn');
-            const mods = document.querySelectorAll('.module-section');
             btns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    mods.forEach(m => m.classList.add('hidden-section'));
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.module-section').forEach(m => m.classList.add('hidden-section'));
                     document.getElementById(`module-${btn.dataset.target}`).classList.remove('hidden-section');
-                    btns.forEach(b => { b.classList.remove('text-green-600'); b.classList.add('text-gray-400'); });
-                    btn.classList.remove('text-gray-400'); btn.classList.add('text-green-600');
+                    btns.forEach(b => { b.classList.remove('text-blue-600'); b.classList.add('text-gray-400'); });
+                    btn.classList.remove('text-gray-400'); btn.classList.add('text-blue-600');
                 });
             });
         }
 
+        // --- 3. DASHBOARD (EXACT PROFIT CALCULATION) ---
         async function refreshDashboard() {
             const sales = await DB.getTable('sales');
             let tSales = 0, tProfit = 0;
@@ -244,113 +287,27 @@
             document.getElementById('dash-profit').innerText = `₹${tProfit.toFixed(2)}`;
         }
 
-        // --- POS LOGIC ---
+        // --- 4. ADVANCED POS / BILLING ---
         let cart = [];
+        
         document.getElementById('pos-search').addEventListener('input', async (e) => {
             const q = e.target.value.toLowerCase();
             const res = document.getElementById('pos-search-results');
             res.innerHTML = '';
             if(q.length < 1) return;
             const inv = await DB.getTable('inventory');
-            const filtered = inv.filter(i => i.name.toLowerCase().includes(q) && parseInt(i.qty) > 0);
+            
+            // Search items that have remaining base quantity
+            const filtered = inv.filter(i => i.name.toLowerCase().includes(q) && parseInt(i.baseQty) > 0);
+            
             filtered.forEach(i => {
-                const unitText = i.unit ? i.unit : 'units';
-                res.innerHTML += `
-                    <div class="p-2 border flex justify-between items-center bg-gray-50 mt-1 rounded">
-                        <div><p class="font-bold text-sm text-gray-800">${i.name}</p><p class="text-xs text-gray-500">₹${i.mrp} / ${unitText} | Stock: ${i.qty}</p></div>
-                        <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold" onclick="addToCart('${i.id}')">Add</button>
-                    </div>`;
-            });
-        });
-
-        window.addToCart = async (id) => {
-            const inv = await DB.getTable('inventory');
-            const item = inv.find(i => i.id === id);
-            if(!item) return;
-            const ext = cart.find(i => i.id === id);
-            if(ext) {
-                if(ext.cartQty < parseInt(item.qty)) ext.cartQty++;
-                else alert('Not enough stock available!');
-            } else cart.push({...item, cartQty: 1});
-            document.getElementById('pos-search').value = '';
-            document.getElementById('pos-search-results').innerHTML = '';
-            renderCart();
-        };
-
-        window.updateCartQty = (idx, change) => {
-            const item = cart[idx];
-            const newQty = item.cartQty + change;
-            if (newQty > 0 && newQty <= parseInt(item.qty)) {
-                item.cartQty = newQty; renderCart();
-            } else if (newQty > parseInt(item.qty)) {
-                alert(`Only ${item.qty} ${item.unit || 'units'} in stock!`);
-            } else if (newQty === 0) {
-                removeFromCart(idx);
-            }
-        };
-
-        function renderCart() {
-            const list = document.getElementById('pos-cart-list');
-            const btn = document.getElementById('btn-checkout');
-            list.innerHTML = '';
-            let total = 0;
-            if(cart.length === 0) {
-                list.innerHTML = '<p class="text-center py-4 text-xs text-gray-400">Cart is empty</p>';
-                document.getElementById('pos-total').innerText = '₹0.00';
-                btn.disabled = true;
-                return;
-            }
-            cart.forEach((i, idx) => {
-                const t = parseFloat(i.mrp) * i.cartQty;
-                total += t;
-                const unitText = i.unit ? i.unit : 'units';
-                list.innerHTML += `
-                    <div class="flex flex-col border-b pb-3 mb-2 bg-gray-50 p-2 rounded">
-                        <div class="flex justify-between items-center text-sm">
-                            <p class="font-bold text-gray-800 truncate">${i.name} <span class="text-xs font-normal text-gray-500">(${unitText})</span></p>
-                            <button onclick="removeFromCart(${idx})" class="text-red-500 font-bold px-2 text-lg">×</button>
-                        </div>
-                        <div class="flex justify-between items-center mt-2">
-                            <div class="flex items-center space-x-3 bg-white border rounded px-2 py-1 shadow-sm">
-                                <button onclick="updateCartQty(${idx}, -1)" class="text-gray-500 font-bold text-lg px-2 active:scale-90">-</button>
-                                <span class="font-bold text-gray-800 w-6 text-center">${i.cartQty}</span>
-                                <button onclick="updateCartQty(${idx}, 1)" class="text-blue-600 font-bold text-lg px-2 active:scale-90">+</button>
-                            </div>
-                            <div class="font-bold text-blue-700 text-lg">₹${t.toFixed(2)}</div>
-                        </div>
-                    </div>`;
-            });
-            document.getElementById('pos-total').innerText = `₹${total.toFixed(2)}`;
-            btn.disabled = false;
-        }
-
-        window.removeFromCart = (idx) => { cart.splice(idx, 1); renderCart(); };
-
-        document.getElementById('btn-checkout').addEventListener('click', async () => {
-            let total = 0, profit = 0;
-            const inv = await DB.getTable('inventory');
-            
-            // Build Invoice UI
-            const invBody = document.getElementById('invoice-items');
-            invBody.innerHTML = '';
-            
-            cart.forEach(c => {
-                const dbItem = inv.find(i => i.id === c.id);
-                if(dbItem) dbItem.qty = (parseInt(dbItem.qty) - c.cartQty).toString();
-                const t = parseFloat(c.mrp) * c.cartQty;
-                total += t; profit += t * 0.15;
+                // Calculate display stock
+                const priStock = Math.floor(i.baseQty / i.conv);
+                const secStock = i.baseQty % i.conv;
+                const stockText = i.unitSec !== "NONE" ? `${priStock} ${i.unitPri}, ${secStock} ${i.unitSec}` : `${priStock} ${i.unitPri}`;
                 
-                // Add to receipt HTML
-                invBody.innerHTML += `
-                    <tr class="border-b border-gray-100">
-                        <td class="py-2">${c.name}</td>
-                        <td class="py-2 text-center">${c.cartQty}</td>
-                        <td class="py-2 text-right">₹${t.toFixed(2)}</td>
-                    </tr>`;
-            });
-
-            // Save to DB
-            await DB.saveTable('inventory', inv);
-            const sales = await DB.getTable('sales');
-            sales.push({ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], totalAmount: total.toFixed(2), totalProfit: profit.toFixed(2) });
-            await DB.saveTable('sales', sales
+                res.innerHTML += `
+                    <div class="p-3 border-b border-gray-100 flex justify-between items-center hover:bg-blue-50 transition cursor-pointer" onclick="addToCart('${i.id}')">
+                        <div>
+                            <p class="font-bold text-sm text-gray-800">${i.name}</p>
+                            <p class="text-[10px] text-g
