@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>PharmaPOS Master</title>
+    <title>PharmaPOS Master V2</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
@@ -97,6 +97,16 @@
                                 <input type="number" id="inv-qty" required class="w-full p-2 border rounded bg-gray-50">
                             </div>
                         </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-semibold">Unit Type</label>
+                            <select id="inv-unit" class="w-full p-2 border rounded bg-gray-50 text-gray-700">
+                                <option value="Strips">Strips</option>
+                                <option value="Pieces">Pieces (Pcs)</option>
+                                <option value="Bottles">Bottles</option>
+                                <option value="Tubes">Tubes</option>
+                                <option value="Boxes">Boxes</option>
+                            </select>
+                        </div>
                         <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded shadow hover:bg-green-700 mt-2">
                             Save Medicine
                         </button>
@@ -137,7 +147,6 @@
     </div>
 
     <script>
-        // --- 1. DATABASE LOGIC ---
         localforage.config({ name: 'PharmaPOS_DB', storeName: 'pharmacy_data' });
         const DB = {
             init: async () => {
@@ -150,13 +159,8 @@
             saveTable: async (t, d) => await localforage.setItem(t, d)
         };
 
-        // --- 2. APP LOGIC ---
         document.addEventListener('DOMContentLoaded', async () => {
-            await DB.init();
-            setupNavigation();
-            refreshDashboard();
-            loadInventory();
-            feather.replace();
+            await DB.init(); setupNavigation(); refreshDashboard(); loadInventory(); feather.replace();
         });
 
         function setupNavigation() {
@@ -183,7 +187,7 @@
             document.getElementById('dash-profit').innerText = `₹${tProfit.toFixed(2)}`;
         }
 
-        // --- POS LOGIC ---
+        // --- POS LOGIC (UPDATED WITH QUANTITY CONTROLS) ---
         let cart = [];
         document.getElementById('pos-search').addEventListener('input', async (e) => {
             const q = e.target.value.toLowerCase();
@@ -193,9 +197,10 @@
             const inv = await DB.getTable('inventory');
             const filtered = inv.filter(i => i.name.toLowerCase().includes(q) && parseInt(i.qty) > 0);
             filtered.forEach(i => {
+                const unitText = i.unit ? i.unit : 'units';
                 res.innerHTML += `
                     <div class="p-2 border flex justify-between items-center bg-gray-50 mt-1 rounded">
-                        <div><p class="font-bold text-sm text-gray-800">${i.name}</p><p class="text-xs text-gray-500">₹${i.mrp} | Stock: ${i.qty}</p></div>
+                        <div><p class="font-bold text-sm text-gray-800">${i.name}</p><p class="text-xs text-gray-500">₹${i.mrp} / ${unitText} | Stock: ${i.qty}</p></div>
                         <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold" onclick="addToCart('${i.id}')">Add</button>
                     </div>`;
             });
@@ -215,6 +220,20 @@
             renderCart();
         };
 
+        // NEW: Plus/Minus button logic
+        window.updateCartQty = (idx, change) => {
+            const item = cart[idx];
+            const newQty = item.cartQty + change;
+            if (newQty > 0 && newQty <= parseInt(item.qty)) {
+                item.cartQty = newQty;
+                renderCart();
+            } else if (newQty > parseInt(item.qty)) {
+                alert(`Only ${item.qty} ${item.unit || 'units'} in stock!`);
+            } else if (newQty === 0) {
+                removeFromCart(idx);
+            }
+        };
+
         function renderCart() {
             const list = document.getElementById('pos-cart-list');
             const btn = document.getElementById('btn-checkout');
@@ -229,11 +248,22 @@
             cart.forEach((i, idx) => {
                 const t = parseFloat(i.mrp) * i.cartQty;
                 total += t;
+                const unitText = i.unit ? i.unit : 'units';
+                
                 list.innerHTML += `
-                    <div class="flex justify-between border-b pb-2 mb-2 items-center text-sm">
-                        <div class="w-1/2"><p class="font-bold text-gray-800 truncate">${i.name}</p><p class="text-xs text-gray-500">₹${i.mrp} x ${i.cartQty}</p></div>
-                        <div class="font-bold text-gray-800">₹${t.toFixed(2)}</div>
-                        <button onclick="removeFromCart(${idx})" class="text-red-500 font-bold px-2 text-lg">×</button>
+                    <div class="flex flex-col border-b pb-3 mb-2 bg-gray-50 p-2 rounded">
+                        <div class="flex justify-between items-center text-sm">
+                            <p class="font-bold text-gray-800 truncate">${i.name} <span class="text-xs font-normal text-gray-500">(${unitText})</span></p>
+                            <button onclick="removeFromCart(${idx})" class="text-red-500 font-bold px-2 text-lg">×</button>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="flex items-center space-x-3 bg-white border rounded px-2 py-1 shadow-sm">
+                                <button onclick="updateCartQty(${idx}, -1)" class="text-gray-500 font-bold text-lg px-2 active:scale-90">-</button>
+                                <span class="font-bold text-gray-800 w-6 text-center">${i.cartQty}</span>
+                                <button onclick="updateCartQty(${idx}, 1)" class="text-blue-600 font-bold text-lg px-2 active:scale-90">+</button>
+                            </div>
+                            <div class="font-bold text-blue-700 text-lg">₹${t.toFixed(2)}</div>
+                        </div>
                     </div>`;
             });
             document.getElementById('pos-total').innerText = `₹${total.toFixed(2)}`;
@@ -265,9 +295,13 @@
             e.preventDefault();
             const inv = await DB.getTable('inventory');
             inv.push({
-                id: Date.now().toString(), name: document.getElementById('inv-name').value,
-                batch: document.getElementById('inv-batch').value, expiry: document.getElementById('inv-expiry').value,
-                mrp: document.getElementById('inv-mrp').value, qty: document.getElementById('inv-qty').value
+                id: Date.now().toString(), 
+                name: document.getElementById('inv-name').value,
+                batch: document.getElementById('inv-batch').value, 
+                expiry: document.getElementById('inv-expiry').value,
+                mrp: document.getElementById('inv-mrp').value, 
+                qty: document.getElementById('inv-qty').value,
+                unit: document.getElementById('inv-unit').value // Saved Unit
             });
             await DB.saveTable('inventory', inv);
             e.target.reset(); loadInventory(); alert('✅ Medicine Added!');
@@ -281,11 +315,18 @@
             if(f.length===0) { list.innerHTML = '<p class="text-center py-4 text-xs text-gray-400">No medicines found.</p>'; return; }
             f.forEach(i => {
                 const low = parseInt(i.qty) < 10;
+                const unitText = i.unit ? i.unit : 'units';
                 list.innerHTML += `
                     <div class="border p-3 rounded mb-2 flex justify-between bg-white ${low?'border-red-300 bg-red-50':''}">
-                        <div class="w-3/4"><p class="font-bold text-gray-800 truncate">${i.name}</p><p class="text-xs text-gray-500 mt-1">Batch: ${i.batch} | Exp: ${i.expiry}</p><p class="text-sm font-semibold mt-1">MRP: ₹${i.mrp}</p></div>
-                        <div class="w-1/4 text-right flex flex-col items-end"><span class="px-2 py-1 bg-gray-100 rounded text-xs ${low?'text-red-600':'text-green-600'} font-bold">${i.qty} units</span>
-                        <button onclick="deleteMedicine('${i.id}')" class="text-red-500 text-xs mt-2 font-bold">Remove</button></div>
+                        <div class="w-3/4">
+                            <p class="font-bold text-gray-800 truncate">${i.name}</p>
+                            <p class="text-xs text-gray-500 mt-1">Batch: ${i.batch} | Exp: ${i.expiry}</p>
+                            <p class="text-sm font-semibold mt-1 text-blue-700">MRP: ₹${i.mrp} / ${unitText}</p>
+                        </div>
+                        <div class="w-1/4 text-right flex flex-col items-end">
+                            <span class="px-2 py-1 bg-gray-100 rounded text-xs ${low?'text-red-600':'text-green-600'} font-bold">${i.qty} ${unitText}</span>
+                            <button onclick="deleteMedicine('${i.id}')" class="text-red-500 text-xs mt-2 font-bold bg-white px-2 py-1 border border-red-200 rounded">Remove</button>
+                        </div>
                     </div>`;
             });
         }
