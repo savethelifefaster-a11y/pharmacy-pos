@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>PharmaPOS Master V2</title>
+    <title>PharmaPOS Final</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
@@ -14,10 +14,18 @@
         .app-container { min-height: 100vh; display: flex; flex-direction: column; }
         .main-content { flex: 1; padding-bottom: 80px; overflow-y: auto; }
         .hidden-section { display: none !important; }
+        
+        /* MAGIC PRINT CSS: Hides everything except the invoice when saving as PDF */
+        @media print {
+            body * { visibility: hidden; }
+            #invoice-print-area, #invoice-print-area * { visibility: visible; }
+            #invoice-print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" id="main-app-ui">
         <header class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
             <h1 class="text-xl font-bold tracking-wide">PharmaPOS</h1>
             <span class="text-xs bg-green-800 px-2 py-1 rounded">Offline Ready</span>
@@ -124,13 +132,28 @@
             </section>
 
             <section id="module-settings" class="module-section hidden-section">
-                <h2 class="text-lg font-bold text-gray-700 mb-4">System Settings</h2>
-                <div class="bg-white p-4 rounded-xl shadow">Export JSON Logic (Phase 4)</div>
+                <h2 class="text-lg font-bold text-gray-700 mb-4">System Settings & Backup</h2>
+                
+                <div class="bg-white p-4 rounded-xl shadow mb-4">
+                    <h3 class="font-bold text-gray-800 mb-2 border-b pb-2">Data Protection</h3>
+                    <p class="text-xs text-gray-500 mb-4">Export your data weekly to prevent loss if your phone breaks or cache is cleared.</p>
+                    
+                    <button onclick="exportBackup()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow mb-3 flex items-center justify-center">
+                        <i data-feather="download" class="w-4 h-4 mr-2"></i> Download Backup (JSON)
+                    </button>
+
+                    <div class="relative border-t pt-4">
+                        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importBackup(event)">
+                        <button onclick="document.getElementById('import-file').click()" class="w-full bg-gray-800 text-white font-bold py-3 rounded-lg shadow flex items-center justify-center">
+                            <i data-feather="upload" class="w-4 h-4 mr-2"></i> Restore from Backup
+                        </button>
+                    </div>
+                </div>
             </section>
 
         </main>
 
-        <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-lg">
+        <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-lg no-print">
             <button class="nav-btn flex flex-col items-center p-3 text-green-600 w-1/4" data-target="dashboard">
                 <i data-feather="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Home</span>
             </button>
@@ -144,6 +167,40 @@
                 <i data-feather="settings" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">More</span>
             </button>
         </nav>
+    </div>
+
+    <div id="invoice-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col">
+        <div id="invoice-print-area" class="flex-1 p-6 overflow-y-auto">
+            <div class="text-center mb-6 border-b pb-4">
+                <h1 class="text-2xl font-bold text-gray-800">PHARMAPOS</h1>
+                <p class="text-sm text-gray-500">Retail Medical Store</p>
+                <p class="text-xs text-gray-400 mt-1" id="invoice-date"></p>
+            </div>
+            
+            <div class="mb-4">
+                <table class="w-full text-sm text-left">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="pb-2">Item</th>
+                            <th class="pb-2 text-center">Qty</th>
+                            <th class="pb-2 text-right">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoice-items" class="text-gray-700">
+                        </tbody>
+                </table>
+            </div>
+            
+            <div class="border-t pt-4 text-right">
+                <p class="text-lg font-bold text-gray-800">Total: <span id="invoice-final-total">₹0.00</span></p>
+                <p class="text-xs text-gray-500 mt-4 text-center">Thank you for your visit!</p>
+            </div>
+        </div>
+
+        <div class="p-4 bg-gray-100 flex space-x-3 no-print">
+            <button onclick="closeInvoice()" class="flex-1 bg-gray-400 text-white font-bold py-3 rounded-lg">New Bill</button>
+            <button onclick="window.print()" class="flex-1 bg-green-600 text-white font-bold py-3 rounded-lg">Save PDF</button>
+        </div>
     </div>
 
     <script>
@@ -187,7 +244,7 @@
             document.getElementById('dash-profit').innerText = `₹${tProfit.toFixed(2)}`;
         }
 
-        // --- POS LOGIC (UPDATED WITH QUANTITY CONTROLS) ---
+        // --- POS LOGIC ---
         let cart = [];
         document.getElementById('pos-search').addEventListener('input', async (e) => {
             const q = e.target.value.toLowerCase();
@@ -220,13 +277,11 @@
             renderCart();
         };
 
-        // NEW: Plus/Minus button logic
         window.updateCartQty = (idx, change) => {
             const item = cart[idx];
             const newQty = item.cartQty + change;
             if (newQty > 0 && newQty <= parseInt(item.qty)) {
-                item.cartQty = newQty;
-                renderCart();
+                item.cartQty = newQty; renderCart();
             } else if (newQty > parseInt(item.qty)) {
                 alert(`Only ${item.qty} ${item.unit || 'units'} in stock!`);
             } else if (newQty === 0) {
@@ -249,7 +304,6 @@
                 const t = parseFloat(i.mrp) * i.cartQty;
                 total += t;
                 const unitText = i.unit ? i.unit : 'units';
-                
                 list.innerHTML += `
                     <div class="flex flex-col border-b pb-3 mb-2 bg-gray-50 p-2 rounded">
                         <div class="flex justify-between items-center text-sm">
@@ -275,71 +329,28 @@
         document.getElementById('btn-checkout').addEventListener('click', async () => {
             let total = 0, profit = 0;
             const inv = await DB.getTable('inventory');
+            
+            // Build Invoice UI
+            const invBody = document.getElementById('invoice-items');
+            invBody.innerHTML = '';
+            
             cart.forEach(c => {
                 const dbItem = inv.find(i => i.id === c.id);
                 if(dbItem) dbItem.qty = (parseInt(dbItem.qty) - c.cartQty).toString();
                 const t = parseFloat(c.mrp) * c.cartQty;
                 total += t; profit += t * 0.15;
+                
+                // Add to receipt HTML
+                invBody.innerHTML += `
+                    <tr class="border-b border-gray-100">
+                        <td class="py-2">${c.name}</td>
+                        <td class="py-2 text-center">${c.cartQty}</td>
+                        <td class="py-2 text-right">₹${t.toFixed(2)}</td>
+                    </tr>`;
             });
+
+            // Save to DB
             await DB.saveTable('inventory', inv);
             const sales = await DB.getTable('sales');
             sales.push({ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], totalAmount: total.toFixed(2), totalProfit: profit.toFixed(2) });
-            await DB.saveTable('sales', sales);
-            cart = []; renderCart(); loadInventory(); refreshDashboard();
-            alert('✅ Invoice Saved & Stock Updated!');
-            document.querySelector('[data-target="dashboard"]').click();
-        });
-
-        // --- INVENTORY LOGIC ---
-        document.getElementById('form-add-medicine').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const inv = await DB.getTable('inventory');
-            inv.push({
-                id: Date.now().toString(), 
-                name: document.getElementById('inv-name').value,
-                batch: document.getElementById('inv-batch').value, 
-                expiry: document.getElementById('inv-expiry').value,
-                mrp: document.getElementById('inv-mrp').value, 
-                qty: document.getElementById('inv-qty').value,
-                unit: document.getElementById('inv-unit').value // Saved Unit
-            });
-            await DB.saveTable('inventory', inv);
-            e.target.reset(); loadInventory(); alert('✅ Medicine Added!');
-        });
-
-        async function loadInventory(q = '') {
-            const inv = await DB.getTable('inventory');
-            const list = document.getElementById('inv-list');
-            list.innerHTML = '';
-            const f = inv.filter(i => i.name.toLowerCase().includes(q.toLowerCase()));
-            if(f.length===0) { list.innerHTML = '<p class="text-center py-4 text-xs text-gray-400">No medicines found.</p>'; return; }
-            f.forEach(i => {
-                const low = parseInt(i.qty) < 10;
-                const unitText = i.unit ? i.unit : 'units';
-                list.innerHTML += `
-                    <div class="border p-3 rounded mb-2 flex justify-between bg-white ${low?'border-red-300 bg-red-50':''}">
-                        <div class="w-3/4">
-                            <p class="font-bold text-gray-800 truncate">${i.name}</p>
-                            <p class="text-xs text-gray-500 mt-1">Batch: ${i.batch} | Exp: ${i.expiry}</p>
-                            <p class="text-sm font-semibold mt-1 text-blue-700">MRP: ₹${i.mrp} / ${unitText}</p>
-                        </div>
-                        <div class="w-1/4 text-right flex flex-col items-end">
-                            <span class="px-2 py-1 bg-gray-100 rounded text-xs ${low?'text-red-600':'text-green-600'} font-bold">${i.qty} ${unitText}</span>
-                            <button onclick="deleteMedicine('${i.id}')" class="text-red-500 text-xs mt-2 font-bold bg-white px-2 py-1 border border-red-200 rounded">Remove</button>
-                        </div>
-                    </div>`;
-            });
-        }
-        
-        document.getElementById('inv-search').addEventListener('input', (e) => loadInventory(e.target.value));
-        
-        window.deleteMedicine = async (id) => {
-            if(confirm('Delete this medicine?')) {
-                let inv = await DB.getTable('inventory');
-                await DB.saveTable('inventory', inv.filter(i => i.id !== id));
-                loadInventory();
-            }
-        };
-    </script>
-</body>
-</html>
+            await DB.saveTable('sales', sales
