@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>PharmaPOS PRO V3</title>
+    <title>PharmaPOS Master V2</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
@@ -14,15 +14,12 @@
         .app-container { min-height: 100vh; display: flex; flex-direction: column; }
         .main-content { flex: 1; padding-bottom: 80px; overflow-y: auto; }
         .hidden-section { display: none !important; }
-        /* Custom Tab Styles */
-        .tab-active { border-bottom: 2px solid #059669; color: #059669; font-weight: bold; }
-        .tab-inactive { color: #6b7280; font-weight: normal; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-50 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide">PharmaPOS Pro</h1>
+            <h1 class="text-xl font-bold tracking-wide">PharmaPOS</h1>
             <span class="text-xs bg-green-800 px-2 py-1 rounded">Offline Ready</span>
         </header>
 
@@ -47,7 +44,7 @@
                 
                 <div class="bg-white p-4 rounded-xl shadow mb-4">
                     <div class="relative mb-2">
-                        <input type="text" id="pos-search" placeholder="Search by Name or Barcode..." class="w-full p-2 pl-8 border rounded bg-gray-50 focus:outline-none focus:border-blue-500">
+                        <input type="text" id="pos-search" placeholder="Search medicine to bill..." class="w-full p-2 pl-8 border rounded bg-gray-50 focus:outline-none focus:border-blue-500">
                         <i data-feather="search" class="w-4 h-4 absolute left-2 top-3 text-gray-400"></i>
                     </div>
                     <div id="pos-search-results" class="space-y-1 max-h-40 overflow-y-auto"></div>
@@ -73,124 +70,45 @@
             <section id="module-inventory" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-700 mb-4">Inventory Management</h2>
                 
-                <div class="bg-white rounded-xl shadow mb-4 overflow-hidden">
-                    <h3 class="font-bold text-gray-800 p-4 bg-gray-50 border-b flex items-center">
-                        <i data-feather="plus-circle" class="w-4 h-4 mr-2 text-green-600"></i> Add New Item
-                    </h3>
-                    
-                    <div class="flex border-b text-sm">
-                        <button class="w-1/3 py-3 tab-active inv-tab-btn" data-tab="tab-basic">Basic</button>
-                        <button class="w-1/3 py-3 tab-inactive inv-tab-btn" data-tab="tab-pricing">Pricing</button>
-                        <button class="w-1/3 py-3 tab-inactive inv-tab-btn" data-tab="tab-stock">Stock</button>
-                    </div>
-
-                    <form id="form-add-medicine" class="p-4">
-                        
-                        <div id="tab-basic" class="inv-tab-content block space-y-4">
-                            <div>
-                                <label class="text-xs text-gray-500 font-semibold">Item Name *</label>
-                                <input type="text" id="inv-name" required class="w-full p-2 border rounded bg-gray-50" placeholder="e.g. Aceden Sp">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Barcode / Code</label>
-                                    <input type="text" id="inv-code" class="w-full p-2 border rounded bg-gray-50" placeholder="Scan or type">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Category</label>
-                                    <input type="text" id="inv-category" class="w-full p-2 border rounded bg-gray-50" placeholder="e.g. Painkiller">
-                                </div>
-                            </div>
-                            <div class="p-3 bg-blue-50 border border-blue-100 rounded">
-                                <label class="text-xs text-blue-700 font-bold mb-2 block">Unit & Conversion</label>
-                                <div class="grid grid-cols-2 gap-3 mb-2">
-                                    <div>
-                                        <label class="text-[10px] text-gray-500 uppercase">Primary Unit</label>
-                                        <select id="inv-unit-pri" class="w-full p-2 border rounded text-sm bg-white">
-                                            <option value="Strips">Strips</option>
-                                            <option value="Boxes">Boxes</option>
-                                            <option value="Bottles">Bottles</option>
-                                            <option value="Pieces">Pieces</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] text-gray-500 uppercase">Secondary Unit</label>
-                                        <select id="inv-unit-sec" class="w-full p-2 border rounded text-sm bg-white">
-                                            <option value="Tablets">Tablets</option>
-                                            <option value="Pieces">Pieces</option>
-                                            <option value="None">None</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="flex items-center text-sm text-gray-600">
-                                    <span>1 Primary = </span>
-                                    <input type="number" id="inv-conversion" value="10" class="w-16 p-1 border rounded mx-2 text-center bg-white">
-                                    <span>Secondary</span>
-                                </div>
-                            </div>
+                <div class="bg-white p-4 rounded-xl shadow mb-4">
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center"><i data-feather="plus-circle" class="w-4 h-4 mr-1 text-green-600"></i> Add New Medicine</h3>
+                    <form id="form-add-medicine" class="space-y-3">
+                        <div>
+                            <label class="text-xs text-gray-500 font-semibold">Medicine Name</label>
+                            <input type="text" id="inv-name" required class="w-full p-2 border rounded bg-gray-50">
                         </div>
-
-                        <div id="tab-pricing" class="inv-tab-content hidden space-y-4">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Purchase Price (₹)</label>
-                                    <input type="number" step="0.01" id="inv-purchase" required class="w-full p-2 border rounded bg-gray-50" placeholder="Your cost">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">MRP (₹)</label>
-                                    <input type="number" step="0.01" id="inv-mrp" required class="w-full p-2 border rounded bg-gray-50" placeholder="Max price">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Sale Price (₹)</label>
-                                    <input type="number" step="0.01" id="inv-sale" required class="w-full p-2 border rounded bg-gray-50" placeholder="Selling for">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Tax Rate (%)</label>
-                                    <select id="inv-tax" class="w-full p-2 border rounded bg-gray-50">
-                                        <option value="0">None (0%)</option>
-                                        <option value="5">GST 5%</option>
-                                        <option value="12">GST 12%</option>
-                                        <option value="18">GST 18%</option>
-                                    </select>
-                                </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs text-gray-500 font-semibold">Batch No</label>
+                                <input type="text" id="inv-batch" required class="w-full p-2 border rounded bg-gray-50">
                             </div>
                             <div>
-                                <label class="text-xs text-gray-500 font-semibold">HSN / SAC Code</label>
-                                <input type="text" id="inv-hsn" class="w-full p-2 border rounded bg-gray-50">
+                                <label class="text-xs text-gray-500 font-semibold">Expiry Date</label>
+                                <input type="month" id="inv-expiry" required class="w-full p-2 border rounded bg-gray-50">
                             </div>
                         </div>
-
-                        <div id="tab-stock" class="inv-tab-content hidden space-y-4">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Opening Stock Qty</label>
-                                    <input type="number" id="inv-qty" required class="w-full p-2 border rounded bg-gray-50" placeholder="In Primary Unit">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Min Stock Alert</label>
-                                    <input type="number" id="inv-min-stock" value="5" class="w-full p-2 border rounded bg-gray-50">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Batch No</label>
-                                    <input type="text" id="inv-batch" class="w-full p-2 border rounded bg-gray-50">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-semibold">Expiry Date</label>
-                                    <input type="month" id="inv-expiry" class="w-full p-2 border rounded bg-gray-50">
-                                </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs text-gray-500 font-semibold">MRP (₹)</label>
+                                <input type="number" step="0.01" id="inv-mrp" required class="w-full p-2 border rounded bg-gray-50">
                             </div>
                             <div>
-                                <label class="text-xs text-gray-500 font-semibold">Item Location (Rack/Shelf)</label>
-                                <input type="text" id="inv-location" class="w-full p-2 border rounded bg-gray-50" placeholder="e.g. Rack A2">
+                                <label class="text-xs text-gray-500 font-semibold">Stock Qty</label>
+                                <input type="number" id="inv-qty" required class="w-full p-2 border rounded bg-gray-50">
                             </div>
                         </div>
-
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded shadow hover:bg-green-700 mt-6 active:scale-95 transition-transform">
-                            Save Item Details
+                        <div>
+                            <label class="text-xs text-gray-500 font-semibold">Unit Type</label>
+                            <select id="inv-unit" class="w-full p-2 border rounded bg-gray-50 text-gray-700">
+                                <option value="Strips">Strips</option>
+                                <option value="Pieces">Pieces (Pcs)</option>
+                                <option value="Bottles">Bottles</option>
+                                <option value="Tubes">Tubes</option>
+                                <option value="Boxes">Boxes</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded shadow hover:bg-green-700 mt-2">
+                            Save Medicine
                         </button>
                     </form>
                 </div>
@@ -198,7 +116,7 @@
                 <div class="bg-white p-4 rounded-xl shadow">
                     <h3 class="font-bold text-gray-800 mb-3">Current Stock</h3>
                     <div class="relative mb-3">
-                        <input type="text" id="inv-search" placeholder="Search medicine or scan barcode..." class="w-full p-2 pl-8 border rounded bg-gray-50">
+                        <input type="text" id="inv-search" placeholder="Search medicine..." class="w-full p-2 pl-8 border rounded bg-gray-50">
                         <i data-feather="search" class="w-4 h-4 absolute left-2 top-3 text-gray-400"></i>
                     </div>
                     <div id="inv-list" class="space-y-2"></div>
@@ -207,11 +125,7 @@
 
             <section id="module-settings" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-700 mb-4">System Settings</h2>
-                <div class="bg-white p-4 rounded-xl shadow text-center">
-                    <button class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow" onclick="alert('Export ready for Phase 4!')">
-                        Export Database Backup
-                    </button>
-                </div>
+                <div class="bg-white p-4 rounded-xl shadow">Export JSON Logic (Phase 4)</div>
             </section>
 
         </main>
@@ -233,12 +147,13 @@
     </div>
 
     <script>
-        // Database
         localforage.config({ name: 'PharmaPOS_DB', storeName: 'pharmacy_data' });
         const DB = {
             init: async () => {
-                if (!await localforage.getItem('inventory')) await localforage.setItem('inventory', []);
-                if (!await localforage.getItem('sales')) await localforage.setItem('sales', []);
+                const inv = await localforage.getItem('inventory');
+                if (!inv) await localforage.setItem('inventory', []);
+                const sales = await localforage.getItem('sales');
+                if (!sales) await localforage.setItem('sales', []);
             },
             getTable: async (t) => (await localforage.getItem(t)) || [],
             saveTable: async (t, d) => await localforage.setItem(t, d)
@@ -248,12 +163,11 @@
             await DB.init(); setupNavigation(); refreshDashboard(); loadInventory(); feather.replace();
         });
 
-        // Navigation
         function setupNavigation() {
             const btns = document.querySelectorAll('.nav-btn');
             const mods = document.querySelectorAll('.module-section');
             btns.forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', (e) => {
                     mods.forEach(m => m.classList.add('hidden-section'));
                     document.getElementById(`module-${btn.dataset.target}`).classList.remove('hidden-section');
                     btns.forEach(b => { b.classList.remove('text-green-600'); b.classList.add('text-gray-400'); });
@@ -261,19 +175,6 @@
                 });
             });
         }
-
-        // Add Item Form Tab Logic
-        const tabBtns = document.querySelectorAll('.inv-tab-btn');
-        const tabContents = document.querySelectorAll('.inv-tab-content');
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                tabBtns.forEach(b => { b.classList.remove('tab-active'); b.classList.add('tab-inactive'); });
-                tabContents.forEach(c => c.classList.add('hidden'));
-                btn.classList.remove('tab-inactive'); btn.classList.add('tab-active');
-                document.getElementById(btn.dataset.tab).classList.remove('hidden');
-            });
-        });
 
         async function refreshDashboard() {
             const sales = await DB.getTable('sales');
@@ -286,7 +187,7 @@
             document.getElementById('dash-profit').innerText = `₹${tProfit.toFixed(2)}`;
         }
 
-        // POS
+        // --- POS LOGIC (UPDATED WITH QUANTITY CONTROLS) ---
         let cart = [];
         document.getElementById('pos-search').addEventListener('input', async (e) => {
             const q = e.target.value.toLowerCase();
@@ -294,15 +195,12 @@
             res.innerHTML = '';
             if(q.length < 1) return;
             const inv = await DB.getTable('inventory');
-            // Search by Name or Barcode
-            const filtered = inv.filter(i => (i.name.toLowerCase().includes(q) || (i.code && i.code.toLowerCase().includes(q))) && parseInt(i.qty) > 0);
+            const filtered = inv.filter(i => i.name.toLowerCase().includes(q) && parseInt(i.qty) > 0);
             filtered.forEach(i => {
+                const unitText = i.unit ? i.unit : 'units';
                 res.innerHTML += `
                     <div class="p-2 border flex justify-between items-center bg-gray-50 mt-1 rounded">
-                        <div>
-                            <p class="font-bold text-sm text-gray-800">${i.name}</p>
-                            <p class="text-xs text-gray-500">₹${i.salePrice} / ${i.unitPri} | Stock: ${i.qty}</p>
-                        </div>
+                        <div><p class="font-bold text-sm text-gray-800">${i.name}</p><p class="text-xs text-gray-500">₹${i.mrp} / ${unitText} | Stock: ${i.qty}</p></div>
                         <button class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold" onclick="addToCart('${i.id}')">Add</button>
                     </div>`;
             });
@@ -322,12 +220,126 @@
             renderCart();
         };
 
+        // NEW: Plus/Minus button logic
         window.updateCartQty = (idx, change) => {
             const item = cart[idx];
             const newQty = item.cartQty + change;
-            if (newQty > 0 && newQty <= parseInt(item.qty)) { item.cartQty = newQty; renderCart(); }
-            else if (newQty > parseInt(item.qty)) alert(`Only ${item.qty} in stock!`);
-            else if (newQty === 0) removeFromCart(idx);
+            if (newQty > 0 && newQty <= parseInt(item.qty)) {
+                item.cartQty = newQty;
+                renderCart();
+            } else if (newQty > parseInt(item.qty)) {
+                alert(`Only ${item.qty} ${item.unit || 'units'} in stock!`);
+            } else if (newQty === 0) {
+                removeFromCart(idx);
+            }
         };
 
+        function renderCart() {
+            const list = document.getElementById('pos-cart-list');
+            const btn = document.getElementById('btn-checkout');
+            list.innerHTML = '';
+            let total = 0;
+            if(cart.length === 0) {
+                list.innerHTML = '<p class="text-center py-4 text-xs text-gray-400">Cart is empty</p>';
+                document.getElementById('pos-total').innerText = '₹0.00';
+                btn.disabled = true;
+                return;
+            }
+            cart.forEach((i, idx) => {
+                const t = parseFloat(i.mrp) * i.cartQty;
+                total += t;
+                const unitText = i.unit ? i.unit : 'units';
+                
+                list.innerHTML += `
+                    <div class="flex flex-col border-b pb-3 mb-2 bg-gray-50 p-2 rounded">
+                        <div class="flex justify-between items-center text-sm">
+                            <p class="font-bold text-gray-800 truncate">${i.name} <span class="text-xs font-normal text-gray-500">(${unitText})</span></p>
+                            <button onclick="removeFromCart(${idx})" class="text-red-500 font-bold px-2 text-lg">×</button>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="flex items-center space-x-3 bg-white border rounded px-2 py-1 shadow-sm">
+                                <button onclick="updateCartQty(${idx}, -1)" class="text-gray-500 font-bold text-lg px-2 active:scale-90">-</button>
+                                <span class="font-bold text-gray-800 w-6 text-center">${i.cartQty}</span>
+                                <button onclick="updateCartQty(${idx}, 1)" class="text-blue-600 font-bold text-lg px-2 active:scale-90">+</button>
+                            </div>
+                            <div class="font-bold text-blue-700 text-lg">₹${t.toFixed(2)}</div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('pos-total').innerText = `₹${total.toFixed(2)}`;
+            btn.disabled = false;
+        }
+
+        window.removeFromCart = (idx) => { cart.splice(idx, 1); renderCart(); };
+
+        document.getElementById('btn-checkout').addEventListener('click', async () => {
+            let total = 0, profit = 0;
+            const inv = await DB.getTable('inventory');
+            cart.forEach(c => {
+                const dbItem = inv.find(i => i.id === c.id);
+                if(dbItem) dbItem.qty = (parseInt(dbItem.qty) - c.cartQty).toString();
+                const t = parseFloat(c.mrp) * c.cartQty;
+                total += t; profit += t * 0.15;
+            });
+            await DB.saveTable('inventory', inv);
+            const sales = await DB.getTable('sales');
+            sales.push({ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], totalAmount: total.toFixed(2), totalProfit: profit.toFixed(2) });
+            await DB.saveTable('sales', sales);
+            cart = []; renderCart(); loadInventory(); refreshDashboard();
+            alert('✅ Invoice Saved & Stock Updated!');
+            document.querySelector('[data-target="dashboard"]').click();
+        });
+
+        // --- INVENTORY LOGIC ---
+        document.getElementById('form-add-medicine').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inv = await DB.getTable('inventory');
+            inv.push({
+                id: Date.now().toString(), 
+                name: document.getElementById('inv-name').value,
+                batch: document.getElementById('inv-batch').value, 
+                expiry: document.getElementById('inv-expiry').value,
+                mrp: document.getElementById('inv-mrp').value, 
+                qty: document.getElementById('inv-qty').value,
+                unit: document.getElementById('inv-unit').value // Saved Unit
+            });
+            await DB.saveTable('inventory', inv);
+            e.target.reset(); loadInventory(); alert('✅ Medicine Added!');
+        });
+
+        async function loadInventory(q = '') {
+            const inv = await DB.getTable('inventory');
+            const list = document.getElementById('inv-list');
+            list.innerHTML = '';
+            const f = inv.filter(i => i.name.toLowerCase().includes(q.toLowerCase()));
+            if(f.length===0) { list.innerHTML = '<p class="text-center py-4 text-xs text-gray-400">No medicines found.</p>'; return; }
+            f.forEach(i => {
+                const low = parseInt(i.qty) < 10;
+                const unitText = i.unit ? i.unit : 'units';
+                list.innerHTML += `
+                    <div class="border p-3 rounded mb-2 flex justify-between bg-white ${low?'border-red-300 bg-red-50':''}">
+                        <div class="w-3/4">
+                            <p class="font-bold text-gray-800 truncate">${i.name}</p>
+                            <p class="text-xs text-gray-500 mt-1">Batch: ${i.batch} | Exp: ${i.expiry}</p>
+                            <p class="text-sm font-semibold mt-1 text-blue-700">MRP: ₹${i.mrp} / ${unitText}</p>
+                        </div>
+                        <div class="w-1/4 text-right flex flex-col items-end">
+                            <span class="px-2 py-1 bg-gray-100 rounded text-xs ${low?'text-red-600':'text-green-600'} font-bold">${i.qty} ${unitText}</span>
+                            <button onclick="deleteMedicine('${i.id}')" class="text-red-500 text-xs mt-2 font-bold bg-white px-2 py-1 border border-red-200 rounded">Remove</button>
+                        </div>
+                    </div>`;
+            });
+        }
         
+        document.getElementById('inv-search').addEventListener('input', (e) => loadInventory(e.target.value));
+        
+        window.deleteMedicine = async (id) => {
+            if(confirm('Delete this medicine?')) {
+                let inv = await DB.getTable('inventory');
+                await DB.saveTable('inventory', inv.filter(i => i.id !== id));
+                loadInventory();
+            }
+        };
+    </script>
+</body>
+</html>
