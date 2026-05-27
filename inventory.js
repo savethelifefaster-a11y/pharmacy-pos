@@ -1,5 +1,4 @@
-console.log("Inventory Module Loaded");
-// async function loadInventory(q = '') {
+async function loadInventory(q = '') {
     const inv = await DB.getTable('inventory');
     const list = document.getElementById('inv-list');
     list.innerHTML = '';
@@ -24,5 +23,3 @@ window.promptPurchase = (id) => {
     const qty = prompt("Enter quantity to add:");
     if(qty) handlePurchase(id, qty, "New Batch", "2026-12", "0.00");
 };
-Yahan hum baad mein specific inventory functions dalenge
-
