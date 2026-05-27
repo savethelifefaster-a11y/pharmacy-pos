@@ -53,7 +53,6 @@
 
             <section id="module-pos" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-800 mb-3">Billing Counter</h2>
-                
                 <div class="bg-white p-3 rounded-xl shadow-sm border mb-4">
                     <div class="relative">
                         <input type="text" id="pos-search" placeholder="Search item to bill..." class="w-full p-3 pl-10 border rounded-lg text-sm font-semibold">
@@ -61,187 +60,94 @@
                     </div>
                     <div id="pos-search-results" class="space-y-1 max-h-40 overflow-y-auto mt-2"></div>
                 </div>
-
                 <div class="bg-white p-4 rounded-xl shadow-sm border mb-4 min-h-[200px] flex flex-col">
                     <h3 class="font-bold text-gray-800 text-sm mb-3 border-b pb-2 flex justify-between">
-                        <span>Shopping Cart</span>
-                        <span id="cart-item-count" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">0 Items</span>
+                        <span>Shopping Cart</span><span id="cart-item-count" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">0 Items</span>
                     </h3>
-                    <div id="pos-cart-list" class="space-y-3 flex-1 overflow-y-auto">
-                        <p class="text-sm text-gray-400 text-center py-6">Cart is empty</p>
-                    </div>
-                    
-                    <div class="border-t pt-3 mt-3">
-                        <div class="flex justify-between font-bold text-2xl text-gray-800">
-                            <span>Total:</span>
-                            <span id="pos-total">₹0.00</span>
-                        </div>
-                    </div>
+                    <div id="pos-cart-list" class="space-y-3 flex-1 overflow-y-auto"><p class="text-sm text-gray-400 text-center py-6">Cart is empty</p></div>
+                    <div class="border-t pt-3 mt-3"><div class="flex justify-between font-bold text-2xl text-gray-800"><span>Total:</span><span id="pos-total">₹0.00</span></div></div>
                 </div>
-
-                <button id="btn-checkout" disabled class="w-full bg-blue-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none transition-all mb-4">
-                    Complete Checkout
-                </button>
+                <button id="btn-checkout" disabled class="w-full bg-blue-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-blue-700 disabled:bg-gray-300 transition-all mb-4">Complete Checkout</button>
             </section>
 
             <section id="module-inventory" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-800 mb-3">Add New Item</h2>
-                
                 <form id="form-add-medicine" class="space-y-0">
                     <div class="form-section shadow-sm">
                         <div class="form-section-title">Item Details</div>
-                        <div class="mb-3">
-                            <label class="text-xs font-semibold text-gray-600">Item Name <span class="text-red-500">*</span></label>
-                            <input type="text" id="inv-name" required class="w-full p-2.5 rounded-lg mt-1 text-sm">
-                        </div>
+                        <div class="mb-3"><label class="text-xs font-semibold text-gray-600">Item Name <span class="text-red-500">*</span></label><input type="text" id="inv-name" required class="w-full p-2.5 rounded-lg mt-1 text-sm"></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="text-xs font-semibold text-gray-600">Batch No</label>
-                                <input type="text" id="inv-batch" class="w-full p-2.5 rounded-lg mt-1 text-sm">
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-gray-600">Expiry</label>
-                                <input type="month" id="inv-expiry" class="w-full p-2.5 rounded-lg mt-1 text-sm">
-                            </div>
+                            <div><label class="text-xs font-semibold text-gray-600">Batch No</label><input type="text" id="inv-batch" class="w-full p-2.5 rounded-lg mt-1 text-sm"></div>
+                            <div><label class="text-xs font-semibold text-gray-600">Expiry</label><input type="month" id="inv-expiry" class="w-full p-2.5 rounded-lg mt-1 text-sm"></div>
                         </div>
                     </div>
-
                     <div class="form-section shadow-sm bg-blue-50 border-blue-100">
                         <div class="form-section-title text-blue-700">Unit & Conversion</div>
                         <div class="grid grid-cols-2 gap-3 mb-3">
-                            <div>
-                                <label class="text-xs font-semibold text-blue-800">Primary Unit</label>
-                                <select id="inv-unit-pri" class="w-full p-2.5 rounded-lg mt-1 text-sm font-semibold">
-                                    <option value="STRIPS">STRIPS</option>
-                                    <option value="BOTTLES">BOTTLES</option>
-                                    <option value="BOXES">BOXES</option>
-                                    <option value="PIECES">PIECES</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-blue-800">Secondary Unit</label>
-                                <select id="inv-unit-sec" class="w-full p-2.5 rounded-lg mt-1 text-sm font-semibold">
-                                    <option value="TABLETS">TABLETS</option>
-                                    <option value="ML">ML</option>
-                                    <option value="PIECES">PIECES</option>
-                                    <option value="NONE">NONE</option>
-                                </select>
-                            </div>
+                            <div><label class="text-xs font-semibold text-blue-800">Primary Unit</label><select id="inv-unit-pri" class="w-full p-2.5 rounded-lg mt-1 text-sm font-semibold"><option value="STRIPS">STRIPS</option><option value="BOTTLES">BOTTLES</option><option value="BOXES">BOXES</option><option value="PIECES">PIECES</option></select></div>
+                            <div><label class="text-xs font-semibold text-blue-800">Secondary Unit</label><select id="inv-unit-sec" class="w-full p-2.5 rounded-lg mt-1 text-sm font-semibold"><option value="TABLETS">TABLETS</option><option value="ML">ML</option><option value="PIECES">PIECES</option><option value="NONE">NONE</option></select></div>
                         </div>
                         <div class="bg-white p-2 rounded border border-blue-200 flex items-center justify-between text-sm">
-                            <span class="font-bold text-gray-700">1 <span id="lbl-pri">STRIP</span> =</span>
-                            <input type="number" id="inv-conv" value="10" min="1" class="w-16 p-1 text-center border rounded font-bold text-blue-600">
-                            <span class="font-bold text-gray-700" id="lbl-sec">TABLETS</span>
+                            <span class="font-bold text-gray-700">1 <span id="lbl-pri">STRIP</span> =</span><input type="number" id="inv-conv" value="10" min="1" class="w-16 p-1 text-center border rounded font-bold text-blue-600"><span class="font-bold text-gray-700" id="lbl-sec">TABLETS</span>
                         </div>
                     </div>
-
                     <div class="form-section shadow-sm bg-green-50 border-green-100">
                         <div class="form-section-title text-green-700">Pricing (Per Primary Unit)</div>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-[10px] font-bold text-gray-600 uppercase">Pur. Price</label>
-                                <input type="number" step="0.01" id="inv-pp" required class="w-full p-2 rounded-lg mt-1 text-sm font-bold text-gray-800" placeholder="0.00">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-gray-600 uppercase">MRP</label>
-                                <input type="number" step="0.01" id="inv-mrp" required class="w-full p-2 rounded-lg mt-1 text-sm" placeholder="0.00">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-green-700 uppercase">Sale Price</label>
-                                <input type="number" step="0.01" id="inv-sp" required class="w-full p-2 rounded-lg mt-1 text-sm font-bold text-green-700 border-green-300" placeholder="0.00">
-                            </div>
+                            <div><label class="text-[10px] font-bold text-gray-600 uppercase">Pur. Price</label><input type="number" step="0.01" id="inv-pp" required class="w-full p-2 rounded-lg mt-1 text-sm font-bold text-gray-800" placeholder="0.00"></div>
+                            <div><label class="text-[10px] font-bold text-gray-600 uppercase">MRP</label><input type="number" step="0.01" id="inv-mrp" required class="w-full p-2 rounded-lg mt-1 text-sm" placeholder="0.00"></div>
+                            <div><label class="text-[10px] font-bold text-green-700 uppercase">Sale Price</label><input type="number" step="0.01" id="inv-sp" required class="w-full p-2 rounded-lg mt-1 text-sm font-bold text-green-700 border-green-300" placeholder="0.00"></div>
                         </div>
                     </div>
-
                     <div class="form-section shadow-sm">
                         <div class="form-section-title">Opening Stock</div>
-                        <div>
-                            <label class="text-xs font-semibold text-gray-600">Stock Quantity (In Primary Unit)</label>
-                            <input type="number" id="inv-qty" required class="w-full p-3 rounded-lg mt-1 text-lg font-bold" placeholder="E.g., 10">
-                        </div>
+                        <div><label class="text-xs font-semibold text-gray-600">Stock Quantity (In Primary Unit)</label><input type="number" id="inv-qty" required class="w-full p-3 rounded-lg mt-1 text-lg font-bold" placeholder="E.g., 10"></div>
                     </div>
-
-                    <button type="submit" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-gray-900 active:scale-95 transition-all mt-2 mb-8">
-                        Save Item
-                    </button>
+                    <button type="submit" class="w-full bg-gray-800 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-gray-900 active:scale-95 transition-all mt-2 mb-8">Save Item</button>
                 </form>
 
                 <h2 class="text-lg font-bold text-gray-800 mb-3 border-t pt-6">Inventory List</h2>
                 <div class="bg-white p-3 rounded-xl shadow-sm border">
-                    <div class="relative mb-3">
-                        <input type="text" id="inv-search" placeholder="Search inventory..." class="w-full p-2 pl-8 border rounded-lg text-sm">
-                        <i data-feather="search" class="w-4 h-4 absolute left-2.5 top-3 text-gray-400"></i>
-                    </div>
+                    <div class="relative mb-3"><input type="text" id="inv-search" placeholder="Search inventory..." class="w-full p-2 pl-8 border rounded-lg text-sm"><i data-feather="search" class="w-4 h-4 absolute left-2.5 top-3 text-gray-400"></i></div>
                     <div id="inv-list" class="space-y-2"></div>
                 </div>
             </section>
 
             <section id="module-settings" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Settings & Data</h2>
-                
                 <div class="bg-white p-4 rounded-xl shadow-sm border mb-4">
                     <h3 class="font-bold text-gray-800 mb-4 flex items-center"><i data-feather="database" class="w-5 h-5 mr-2 text-blue-600"></i> Data Management</h3>
-                    
-                    <button onclick="exportBackup()" class="w-full bg-blue-50 text-blue-700 font-bold py-3 rounded-lg border border-blue-200 mb-3 flex items-center justify-center">
-                        <i data-feather="download" class="w-4 h-4 mr-2"></i> Download Backup
-                    </button>
-
+                    <button onclick="exportBackup()" class="w-full bg-blue-50 text-blue-700 font-bold py-3 rounded-lg border border-blue-200 mb-3 flex items-center justify-center"><i data-feather="download" class="w-4 h-4 mr-2"></i> Download Backup</button>
                     <input type="file" id="import-file" class="hidden" accept=".json" onchange="importBackup(event)">
-                    <button onclick="document.getElementById('import-file').click()" class="w-full bg-gray-50 text-gray-700 font-bold py-3 rounded-lg border border-gray-200 mb-6 flex items-center justify-center">
-                        <i data-feather="upload" class="w-4 h-4 mr-2"></i> Restore Backup
-                    </button>
-                    
+                    <button onclick="document.getElementById('import-file').click()" class="w-full bg-gray-50 text-gray-700 font-bold py-3 rounded-lg border border-gray-200 mb-6 flex items-center justify-center"><i data-feather="upload" class="w-4 h-4 mr-2"></i> Restore Backup</button>
                     <div class="border-t border-red-100 pt-4">
                         <h4 class="text-xs font-bold text-red-600 uppercase mb-2">Danger Zone</h4>
-                        <button onclick="factoryReset()" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg shadow flex items-center justify-center">
-                            <i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Factory Reset Database
-                        </button>
+                        <button onclick="factoryReset()" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg shadow flex items-center justify-center"><i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Factory Reset Database</button>
                     </div>
                 </div>
             </section>
         </main>
 
-        <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.03)] no-print">
-            <button class="nav-btn flex flex-col items-center p-3 text-blue-600 w-1/4" data-target="dashboard">
-                <i data-feather="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Home</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="pos">
-                <i data-feather="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Billing</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="inventory">
-                <i data-feather="package" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Items</span>
-            </button>
-            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="settings">
-                <i data-feather="settings" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">More</span>
-            </button>
+        <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-lg no-print">
+            <button class="nav-btn flex flex-col items-center p-3 text-blue-600 w-1/4" data-target="dashboard"><i data-feather="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Home</span></button>
+            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="pos"><i data-feather="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Billing</span></button>
+            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="inventory"><i data-feather="package" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">Items</span></button>
+            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="settings"><i data-feather="settings" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-bold">More</span></button>
         </nav>
     </div>
 
     <div id="invoice-modal" class="fixed inset-0 bg-white z-[100] hidden flex-col">
         <div id="invoice-print-area" class="flex-1 p-6 overflow-y-auto">
-            <div class="text-center mb-6 border-b pb-4">
-                <h1 class="text-2xl font-bold text-gray-800">PHARMAPOS PRO</h1>
-                <p class="text-sm text-gray-500">Retail Invoice</p>
-                <p class="text-xs text-gray-400 mt-1" id="invoice-date"></p>
-            </div>
-            <table class="w-full text-sm text-left mb-4">
-                <thead>
-                    <tr class="border-b"><th class="pb-2">Item</th><th class="pb-2 text-center">Qty</th><th class="pb-2 text-right">Price</th></tr>
-                </thead>
-                <tbody id="invoice-items" class="text-gray-700"></tbody>
-            </table>
-            <div class="border-t pt-4 text-right">
-                <p class="text-xl font-bold text-gray-800">Total: <span id="invoice-final-total">₹0.00</span></p>
-            </div>
+            <div class="text-center mb-6 border-b pb-4"><h1 class="text-2xl font-bold text-gray-800">PHARMAPOS PRO</h1><p class="text-sm text-gray-500">Retail Invoice</p><p class="text-xs text-gray-400 mt-1" id="invoice-date"></p></div>
+            <table class="w-full text-sm text-left mb-4"><thead><tr class="border-b"><th class="pb-2">Item</th><th class="pb-2 text-center">Qty</th><th class="pb-2 text-right">Price</th></tr></thead><tbody id="invoice-items" class="text-gray-700"></tbody></table>
+            <div class="border-t pt-4 text-right"><p class="text-xl font-bold text-gray-800">Total: <span id="invoice-final-total">₹0.00</span></p></div>
         </div>
         <div class="p-4 bg-gray-100 flex space-x-3 no-print">
             <button onclick="closeInvoice()" class="flex-1 bg-gray-400 text-white font-bold py-3 rounded-lg">New Bill</button>
             <button onclick="window.print()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg">Print / Save</button>
         </div>
     </div>
-
-    <script>
-        // ANTI-FREEZE: NAVIGATION SETUP RUNS FIRST
+        <script>
         function setupNavigation() {
             const btns = document.querySelectorAll('.nav-btn');
             btns.forEach(btn => {
@@ -254,27 +160,20 @@
             });
         }
 
-        // --- 1. INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', async () => {
-            setupNavigation(); // Ensures tabs work immediately
-            
+            setupNavigation();
             try { if(typeof feather !== 'undefined') feather.replace(); } catch(e) {}
-            
             try {
                 localforage.config({ name: 'PharmaPOS_PRO', storeName: 'pharmacy_data' });
                 if (!(await localforage.getItem('inventory'))) await localforage.setItem('inventory', []);
                 if (!(await localforage.getItem('sales'))) await localforage.setItem('sales', []);
                 document.getElementById('db-status').innerText = "Online";
                 document.getElementById('db-status').classList.replace('bg-blue-900', 'bg-green-600');
-                
-                await refreshDashboard();
-                await loadInventory();
+                await refreshDashboard(); await loadInventory();
             } catch (error) {
                 document.getElementById('db-status').innerText = "DB Error";
                 document.getElementById('db-status').classList.replace('bg-blue-900', 'bg-red-600');
-                alert("Database failed to load. Try turning off your Adblocker or VPN.");
             }
-            
             try {
                 document.getElementById('inv-unit-pri').addEventListener('change', (e) => { document.getElementById('lbl-pri').innerText = e.target.value; });
                 document.getElementById('inv-unit-sec').addEventListener('change', (e) => { document.getElementById('lbl-sec').innerText = e.target.value; });
@@ -283,35 +182,134 @@
 
         const DB = {
             getTable: async (t) => { try { return (await localforage.getItem(t)) || []; } catch(e) { return []; } },
-            saveTable: async (t, d) => { try { await localforage.setItem(t, d); } catch(e) { alert("Save failed!"); } }
+            saveTable: async (t, d) => { try { await localforage.setItem(t, d); } catch(e) {} }
         };
 
-        // --- DASHBOARD ---
         async function refreshDashboard() {
-            const sales = await DB.getTable('sales');
-            let tSales = 0, tProfit = 0;
-            const today = new Date().toISOString().split('T')[0];
-            sales.forEach(s => {
-                if(s.date === today) { tSales += parseFloat(s.totalAmount); tProfit += parseFloat(s.totalProfit); }
-            });
-            document.getElementById('dash-sales').innerText = `₹${tSales.toFixed(2)}`;
-            document.getElementById('dash-profit').innerText = `₹${tProfit.toFixed(2)}`;
+            const sales = await DB.getTable('sales'); let tSales = 0, tProfit = 0; const today = new Date().toISOString().split('T')[0];
+            sales.forEach(s => { if(s.date === today) { tSales += parseFloat(s.totalAmount); tProfit += parseFloat(s.totalProfit); }});
+            document.getElementById('dash-sales').innerText = `₹${tSales.toFixed(2)}`; document.getElementById('dash-profit').innerText = `₹${tProfit.toFixed(2)}`;
         }
 
-        // --- POS / BILLING ---
         let cart = [];
         document.getElementById('pos-search').addEventListener('input', async (e) => {
-            const q = e.target.value.toLowerCase();
-            const res = document.getElementById('pos-search-results');
-            res.innerHTML = '';
-            if(q.length < 1) return;
-            const inv = await DB.getTable('inventory');
-            
+            const q = e.target.value.toLowerCase(); const res = document.getElementById('pos-search-results'); res.innerHTML = '';
+            if(q.length < 1) return; const inv = await DB.getTable('inventory');
             const filtered = inv.filter(i => i.name.toLowerCase().includes(q) && parseInt(i.baseQty) > 0);
             filtered.forEach(i => {
-                const priStock = Math.floor(i.baseQty / i.conv);
-                const secStock = i.baseQty % i.conv;
+                const priStock = Math.floor(i.baseQty / i.conv); const secStock = i.baseQty % i.conv;
                 const stockText = i.unitSec !== "NONE" ? `${priStock} ${i.unitPri}, ${secStock} ${i.unitSec}` : `${priStock} ${i.unitPri}`;
-                
                 res.innerHTML += `
-    
+                    <div class="p-3 border-b border-gray-100 flex justify-between items-center hover:bg-blue-50 cursor-pointer" onclick="addToCart('${i.id}')">
+                        <div><p class="font-bold text-sm text-gray-800">${i.name}</p><p class="text-[10px] text-gray-500">Stock: <span class="text-blue-600">${stockText}</span></p></div>
+                        <div class="text-right"><p class="text-sm font-bold text-green-600">₹${i.sp}</p><p class="text-[9px] text-gray-400">per ${i.unitPri}</p></div>
+                    </div>`;
+            });
+        });
+
+        window.addToCart = async (id) => {
+            const inv = await DB.getTable('inventory'); const item = inv.find(i => i.id === id); if(!item) return;
+            item.conv = parseInt(item.conv) || 1; item.sp = parseFloat(item.sp) || 0; item.pp = parseFloat(item.pp) || 0;
+            const ext = cart.find(i => i.id === id); if(!ext) { cart.push({...item, cartQty: 1, sellUnitType: 'PRI'}); }
+            document.getElementById('pos-search').value = ''; document.getElementById('pos-search-results').innerHTML = ''; renderCart();
+        };
+
+        window.updateCartQty = (idx, change) => {
+            const item = cart[idx]; const newQty = item.cartQty + change; if(newQty === 0) { removeFromCart(idx); return; }
+            const req = item.sellUnitType === 'PRI' ? (newQty * item.conv) : newQty;
+            if (req <= parseInt(item.baseQty)) { item.cartQty = newQty; renderCart(); } else { alert(`Stock Low! Max base units: ${item.baseQty}`); }
+        };
+
+        window.toggleCartUnit = (idx) => {
+            const item = cart[idx]; if(item.unitSec === "NONE") return; 
+            item.sellUnitType = item.sellUnitType === 'PRI' ? 'SEC' : 'PRI'; item.cartQty = 1; renderCart();
+        }
+
+        function renderCart() {
+            const list = document.getElementById('pos-cart-list'); const btn = document.getElementById('btn-checkout');
+            document.getElementById('cart-item-count').innerText = `${cart.length} Items`; list.innerHTML = ''; let total = 0;
+            if(cart.length === 0) { list.innerHTML = '<p class="text-sm text-gray-400 text-center py-6">Cart is empty</p>'; document.getElementById('pos-total').innerText = '₹0.00'; btn.disabled = true; return; }
+            cart.forEach((i, idx) => {
+                let unitPrice = i.sellUnitType === 'PRI' ? i.sp : (i.sp / i.conv); let lineTotal = unitPrice * i.cartQty; total += lineTotal;
+                const unitLabel = i.sellUnitType === 'PRI' ? i.unitPri : i.unitSec;
+                const tog = i.unitSec !== "NONE" ? "text-blue-600 underline cursor-pointer" : "text-gray-500";
+                list.innerHTML += `
+                    <div class="border rounded-lg p-3 bg-gray-50 border-gray-200 mb-2">
+                        <div class="flex justify-between items-start mb-2">
+                            <div><p class="font-bold text-gray-800 text-sm">${i.name}</p><p class="text-[10px] text-gray-500">₹${unitPrice.toFixed(2)} / <span class="${tog} font-bold" onclick="toggleCartUnit(${idx})">${unitLabel}</span></p></div>
+                            <button onclick="removeFromCart(${idx})" class="text-red-400 p-1"><i data-feather="trash" class="w-4 h-4"></i></button>
+                        </div>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex items-center space-x-3 bg-white border rounded px-1 shadow-sm">
+                                <button onclick="updateCartQty(${idx}, -1)" class="text-gray-600 font-bold w-8 h-8 rounded">-</button>
+                                <span class="font-bold text-gray-800 w-6 text-center text-sm">${i.cartQty}</span>
+                                <button onclick="updateCartQty(${idx}, 1)" class="text-blue-600 font-bold w-8 h-8 rounded">+</button>
+                            </div>
+                            <div class="font-bold text-gray-900 text-lg">₹${lineTotal.toFixed(2)}</div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('pos-total').innerText = `₹${total.toFixed(2)}`; btn.disabled = false; try{feather.replace();}catch(e){}
+        }
+
+        window.removeFromCart = (idx) => { cart.splice(idx, 1); renderCart(); };
+
+        document.getElementById('btn-checkout').addEventListener('click', async () => {
+            let totAmt = 0, totProf = 0; const inv = await DB.getTable('inventory'); const invBody = document.getElementById('invoice-items'); invBody.innerHTML = '';
+            cart.forEach(c => {
+                const dbItem = inv.find(i => i.id === c.id);
+                if(dbItem) { const ded = c.sellUnitType === 'PRI' ? (c.cartQty * c.conv) : c.cartQty; dbItem.baseQty = (parseInt(dbItem.baseQty) - ded).toString(); }
+                const unitSp = c.sellUnitType === 'PRI' ? c.sp : (c.sp / c.conv); const unitPp = c.sellUnitType === 'PRI' ? c.pp : (c.pp / c.conv);
+                const lAmt = unitSp * c.cartQty; const lProf = (unitSp - unitPp) * c.cartQty; totAmt += lAmt; totProf += lProf;
+                const unitLabel = c.sellUnitType === 'PRI' ? c.unitPri : c.unitSec;
+                invBody.innerHTML += `<tr class="border-b"><td class="py-2"><p class="font-bold text-gray-800">${c.name}</p><p class="text-[10px] text-gray-500">₹${unitSp.toFixed(2)}/${unitLabel}</p></td><td class="py-2 text-center font-bold text-gray-700">${c.cartQty}</td><td class="py-2 text-right font-bold text-gray-900">₹${lAmt.toFixed(2)}</td></tr>`;
+            });
+            await DB.saveTable('inventory', inv); const sales = await DB.getTable('sales');
+            sales.push({ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], totalAmount: totAmt.toFixed(2), totalProfit: totProf.toFixed(2) });
+            await DB.saveTable('sales', sales);
+            document.getElementById('invoice-final-total').innerText = `₹${totAmt.toFixed(2)}`; document.getElementById('invoice-date').innerText = `Date: ${new Date().toLocaleString()}`;
+            document.getElementById('invoice-modal').classList.remove('hidden'); document.getElementById('invoice-modal').classList.add('flex');
+            cart = []; renderCart(); loadInventory(); refreshDashboard();
+        });
+
+        window.closeInvoice = () => { document.getElementById('invoice-modal').classList.add('hidden'); document.getElementById('invoice-modal').classList.remove('flex'); document.querySelector('[data-target="dashboard"]').click(); };
+
+        document.getElementById('form-add-medicine').addEventListener('submit', async (e) => {
+            e.preventDefault(); const inv = await DB.getTable('inventory');
+            const pri = document.getElementById('inv-unit-pri').value; const sec = document.getElementById('inv-unit-sec').value;
+            const conv = sec === "NONE" ? 1 : parseInt(document.getElementById('inv-conv').value);
+            const openQtyPri = parseInt(document.getElementById('inv-qty').value); const baseQty = openQtyPri * conv; 
+            inv.push({
+                id: Date.now().toString(), name: document.getElementById('inv-name').value, batch: document.getElementById('inv-batch').value, 
+                expiry: document.getElementById('inv-expiry').value, pp: parseFloat(document.getElementById('inv-pp').value),
+                mrp: parseFloat(document.getElementById('inv-mrp').value), sp: parseFloat(document.getElementById('inv-sp').value), 
+                unitPri: pri, unitSec: sec, conv: conv, baseQty: baseQty 
+            });
+            await DB.saveTable('inventory', inv); e.target.reset(); loadInventory(); 
+            document.getElementById('lbl-pri').innerText = "STRIPS"; document.getElementById('lbl-sec').innerText = "TABLETS"; alert('✅ Saved!');
+        });
+
+        async function loadInventory(q = '') {
+            const inv = await DB.getTable('inventory'); const list = document.getElementById('inv-list'); list.innerHTML = '';
+            const f = inv.filter(i => i.name.toLowerCase().includes(q.toLowerCase()));
+            if(f.length===0) { list.innerHTML = '<p class="text-center py-6 text-sm text-gray-400">No items found.</p>'; return; }
+            f.forEach(i => {
+                const bQty = parseInt(i.baseQty) || 0; const cv = parseInt(i.conv) || 1; const priStock = Math.floor(bQty / cv); const secStock = bQty % cv; const low = priStock < 2;
+                const stockDisplay = i.unitSec !== "NONE" ? `<span class="text-blue-700">${priStock} <span class="text-[9px] font-normal">${i.unitPri}</span></span> | <span class="text-gray-700">${secStock} <span class="text-[9px] font-normal">${i.unitSec}</span></span>` : `<span class="text-blue-700">${priStock} <span class="text-[9px] font-normal">${i.unitPri}</span></span>`;
+                list.innerHTML += `
+                    <div class="border rounded-xl p-3 mb-3 bg-white shadow-sm flex justify-between ${low ? 'border-red-200 bg-red-50' : 'border-gray-200'}">
+                        <div class="w-3/4"><p class="font-bold text-gray-800 text-sm">${i.name}</p><p class="text-[10px] text-gray-500 mt-1">Bat: ${i.batch || 'N/A'} | Exp: ${i.expiry || 'N/A'}</p><div class="mt-2 text-xs font-bold bg-gray-100 inline-block px-2 py-1 rounded">Stock: ${stockDisplay}</div></div>
+                        <div class="w-1/4 flex flex-col items-end justify-between"><p class="font-bold text-green-600 text-sm">₹${(parseFloat(i.sp)||0).toFixed(2)}</p><button onclick="deleteMedicine('${i.id}')" class="text-red-500 text-[10px] font-bold bg-white px-3 py-1.5 border border-red-200 rounded">Delete</button></div>
+                    </div>`;
+            });
+        }
+        
+        document.getElementById('inv-search').addEventListener('input', (e) => loadInventory(e.target.value));
+        window.deleteMedicine = async (id) => { if(confirm('Delete?')) { let inv = await DB.getTable('inventory'); await DB.saveTable('inventory', inv.filter(i => i.id !== id)); loadInventory(); }};
+
+        window.exportBackup = async () => { const data = { inventory: await DB.getTable('inventory'), sales: await DB.getTable('sales') }; const blob = new Blob([JSON.stringify(data)], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `PharmaPOS_Backup.json`; a.click(); URL.revokeObjectURL(url); };
+        window.importBackup = (event) => { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (e) => { try { const data = JSON.parse(e.target.result); if(data.inventory && data.sales) { await DB.saveTable('inventory', data.inventory); await DB.saveTable('sales', data.sales); alert("Restored!"); window.location.reload(); } } catch (err) { alert("Invalid File."); } }; reader.readAsText(file); };
+        window.factoryReset = async () => { if (confirm("⚠️ DANGER: Delete ALL data?") && prompt("Type 'DELETE' to confirm:") === 'DELETE') { await localforage.clear(); alert("Wiped."); window.location.reload(); } };
+    </script>
+</body>
+</html>
