@@ -39,7 +39,30 @@
 
             <section id="module-pos" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-700 mb-4">New Invoice</h2>
-                <div class="bg-white p-4 rounded-xl shadow text-center text-gray-500">Billing Logic (Phase 3)</div>
+                
+                <div class="bg-white p-4 rounded-xl shadow mb-4">
+                    <div class="relative mb-2">
+                        <input type="text" id="pos-search" placeholder="Search medicine to bill..." class="w-full p-2 pl-8 border rounded bg-gray-50 focus:outline-none focus:border-blue-500">
+                        <i data-feather="search" class="w-4 h-4 absolute left-2 top-3 text-gray-400"></i>
+                    </div>
+                    <div id="pos-search-results" class="space-y-1 max-h-40 overflow-y-auto"></div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl shadow mb-4 min-h-[150px]">
+                    <h3 class="font-bold text-gray-800 mb-2 border-b pb-1">Current Cart</h3>
+                    <div id="pos-cart-list" class="space-y-3 mb-4">
+                        <p class="text-xs text-gray-400 text-center py-4">Cart is empty</p>
+                    </div>
+                    
+                    <div class="border-t pt-3 flex justify-between font-bold text-xl text-gray-800">
+                        <span>Total:</span>
+                        <span id="pos-total">₹0.00</span>
+                    </div>
+                </div>
+
+                <button id="btn-checkout" disabled class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow hover:bg-blue-700 active:scale-95 transition-transform disabled:bg-gray-400 disabled:active:scale-100 mb-4">
+                    Complete Checkout
+                </button>
             </section>
 
             <section id="module-inventory" class="module-section hidden-section">
@@ -50,7 +73,7 @@
                     <form id="form-add-medicine" class="space-y-3">
                         <div>
                             <label class="text-xs text-gray-500 font-semibold">Medicine Name</label>
-                            <input type="text" id="inv-name" required class="w-full p-2 border rounded bg-gray-50 focus:outline-none focus:border-emerald-500" placeholder="e.g. Paracetamol 500mg">
+                            <input type="text" id="inv-name" required class="w-full p-2 border rounded bg-gray-50">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
@@ -81,32 +104,31 @@
                 <div class="bg-white p-4 rounded-xl shadow">
                     <h3 class="font-bold text-gray-800 mb-3">Current Stock</h3>
                     <div class="relative mb-3">
-                        <input type="text" id="inv-search" placeholder="Search medicine..." class="w-full p-2 pl-8 border rounded bg-gray-50 focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="inv-search" placeholder="Search medicine..." class="w-full p-2 pl-8 border rounded bg-gray-50">
                         <i data-feather="search" class="w-4 h-4 absolute left-2 top-3 text-gray-400"></i>
                     </div>
-                    <div id="inv-list" class="space-y-2">
-                        </div>
+                    <div id="inv-list" class="space-y-2"></div>
                 </div>
             </section>
 
             <section id="module-settings" class="module-section hidden-section">
                 <h2 class="text-lg font-bold text-gray-700 mb-4">System Settings</h2>
-                <div class="bg-white p-4 rounded-xl shadow">Settings Logic (Phase 4)</div>
+                <div class="bg-white p-4 rounded-xl shadow">Export JSON Logic (Phase 4)</div>
             </section>
 
         </main>
 
         <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-50 flex justify-around items-center pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-            <button class="nav-btn flex flex-col items-center p-3 text-emerald-600 w-1/4 transition-colors" data-target="dashboard">
+            <button class="nav-btn flex flex-col items-center p-3 text-emerald-600 w-1/4" data-target="dashboard">
                 <i data-feather="home" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Home</span>
             </button>
-            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 hover:text-emerald-600 w-1/4 transition-colors" data-target="pos">
+            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="pos">
                 <i data-feather="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Billing</span>
             </button>
-            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 hover:text-emerald-600 w-1/4 transition-colors" data-target="inventory">
+            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="inventory">
                 <i data-feather="package" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">Stock</span>
             </button>
-            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 hover:text-emerald-600 w-1/4 transition-colors" data-target="settings">
+            <button class="nav-btn flex flex-col items-center p-3 text-gray-400 w-1/4" data-target="settings">
                 <i data-feather="settings" class="w-6 h-6 mb-1"></i><span class="text-[10px] font-semibold">More</span>
             </button>
         </nav>
@@ -117,4 +139,3 @@
     <script>feather.replace();</script>
 </body>
 </html>
-
